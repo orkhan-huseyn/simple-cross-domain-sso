@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Accounts</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+  </head>
+  <body>
+    <div class="ui centered grid middle aligned" style="height: 100vh">
+      <div class="row">
+        <div class="four wide column">
+          <h1 class="ui large header">Accounts</h1>
+          <div id="alert" class="ui negative message transition hidden">
+            <div class="header">We're sorry, something is wrong</div>
+            <p>Make sure, you enter the correct username and password</p>
+          </div>
+          <form id="loginForm" class="ui form" autocomplete="off">
+            <div class="field">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" />
+            </div>
+            <button class="ui button fluid" id="loginButton">Login</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.addEventListener('load', () => {
+        const loginForm = document.querySelector('#loginForm')
+        const loginButton = document.querySelector('#loginButton')
+        const alert = document.querySelector('#alert')
+
+        loginForm.addEventListener('submit', (event) => {
+          event.preventDefault()
+
+          const requestBody = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+          }
+          loginButton.classList.add('loading')
+
+          fetch('/accounts/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                loginButton.classList.remove('loading')
+                alert.classList.remove('hidden')
+              }
+              return response
+            })
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.error) return
+
+              const urlParams = new URLSearchParams(window.location.search)
+              const redirectUrl = urlParams.get('redirect')
+
+              if (redirectUrl) {
+                window.location.href = `${redirectUrl}?sid=${response.token}`
+              } else {
+                window.location.href = '/'
+              }
+            })
+        })
+      })
+    </script>
+  </body>
+</html>

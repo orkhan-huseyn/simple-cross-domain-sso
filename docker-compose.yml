@@ -1,0 +1,21 @@
+version: '2'
+services:
+  accounts:
+    build:
+      context: ./accounts
+    ports:
+      - '8080:8080'
+  hr:
+    build:
+      context: ./hr
+    ports:
+      - '3000:3000'
+    depends_on:
+      - accounts
+  tasks:
+    build:
+      context: ./tasks
+    ports:
+      - '4000:4000'
+    depends_on:
+      - accounts

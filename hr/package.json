@@ -1,0 +1,12 @@
+{
+  "name": "hr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "keywords": [],
+  "author": "orkhan-huseyn",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

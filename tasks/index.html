@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Tasks</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"
+    />
+  </head>
+  <body>
+    <div class="ui centered grid middle aligned" style="height: 100vh">
+      <div class="row">
+        <div class="six wide column">
+          <h1 id="welcomeTextArea" class="ui centered huge header">
+            Fetching session info...
+          </h1>
+          <pre id="detailedInfoArea"></pre>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.addEventListener('load', () => {
+        const accountsAppURL = 'http://localhost:8080'
+        const welcomeTextArea = document.getElementById('welcomeTextArea')
+        const detailedInfoArea = document.getElementById('detailedInfoArea')
+
+        /** fetch to see if there is a session id*/
+        fetch(`${accountsAppURL}/accounts/sessions/sid`, {
+          credentials: 'include',
+        })
+          .then((response) => {
+            if (!response.ok) {
+              window.location.href = `${accountsAppURL}/login?redirect=http://localhost:4000`
+            }
+            return response
+          })
+          .then((response) => response.json())
+          .then((response) => {
+            const { sid } = response
+            return fetch(`${accountsAppURL}/accounts/sessions/${sid}`, {
+              credentials: 'include',
+            })
+          })
+          .then((response) => response.json())
+          .then((response) => {
+            welcomeTextArea.textContent = `Welcome to Tasks application, ${response.fullName}!`
+            detailedInfoArea.textContent = JSON.stringify(response, null, 2)
+          })
+      })
+    </script>
+  </body>
+</html>
